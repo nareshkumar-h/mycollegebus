@@ -12,6 +12,10 @@ app.config(function($routeProvider) {
         templateUrl : "_partials/routes.html",
         controller : "RouteController"
     })
+    .when("/boarding_points", {
+        templateUrl : "_partials/boarding_points.html",
+        controller : "RouteBoardingPointController"
+    })
      .when("/routes_stats", {
         templateUrl : "_partials/routes_stats.html",
         controller : "RouteStatsController"
@@ -81,11 +85,50 @@ app.controller('AuthController' , function($rootScope, $scope , $http , config, 
 	
 	
 });
-app.controller("RouteController", function( $scope, $http){	
 
-	$http.get("json/routes.json").then(function(response){
+app.controller("RouteController", function( $scope, config, $http){	
+
+	$http.get(config.apiUrl + "/routes").then(function(response){
 		$scope.routedetails = response.data;
 		localStorage.setItem("ROUTE_DETAILS", JSON.stringify(response.data));
+		//console.log(JSON.stringify(response));
+	});
+	
+	$scope.loadRoutes = function(){
+		console.log("LoadRoutes:" + $scope.route_no);
+		var route_no = $scope.route_no;
+		if ( route_no != null ) {
+			$scope.routedetails = _.where( $scope.routedetails , {"route_no": route_no});
+		}
+		else
+		{
+			$scope.routedetails  = JSON.parse(localStorage.getItem("ROUTE_DETAILS"));
+		}
+	}
+	
+	$scope.getNoOfStudents = function(route_id) {
+		
+		var totalStudents = 0;
+		/*$http.get("json/students_routes.json").then(function(response){
+			var students = response.data;
+			totalStudents = _.where( students , {"route_id" : route_id}).length;
+			console.log("Total Students for route: " + route_id + ", count= " + totalStudents );
+			//console.log(JSON.stringify(response));
+		});*/
+		
+		return totalStudents;
+		
+	}
+	
+});
+
+
+
+app.controller("RouteBoardingPointController", function( $scope, config, $http){	
+
+	$http.get( config.apiUrl + "/boardingdetails").then(function(response){
+		$scope.routedetails = response.data;
+		localStorage.setItem("BOARDING_DETAILS", JSON.stringify(response.data));
 		//console.log(JSON.stringify(response));
 	});
 	

@@ -14,18 +14,14 @@
 
 						<thead>
 							<tr>
-								<th>Sno</th>
 								<th>Route No</th>
-								<th>Boarding Point</th>
-								<th>Time</th>
+								<th>Name</th>
 							</tr>
 						</thead>
 						<tbody>
-						<tr ng-repeat="r in routedetails | filter : { 'route_no' : route_no}">
-						<td> {{$index+1}} </td>
-						<td> {{r.route_no}} </td>
-						<td>{{r.name}}</td>
-						<td>{{r.pickup_time}}</td>
+						<tr ng-repeat="r in routedetails | filter : { 'id' : route_no}">
+						<td> <a href="" ng-click="viewboardingpoints/{{r.id}}"> {{r.id}} </a> </td>						
+						<td> <a href="" ng-click="viewboardingpoints/{{r.id}}"> {{r.name}} </a></td>
 						</tr>
 						</tbody>
 					</table>

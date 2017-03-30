@@ -22,13 +22,9 @@ public class User {
 	private Long mobileNo;
 
 	private boolean active;
-
-	@JsonFormat
-    (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+	
 	private LocalDate createdDate;
 
-	@JsonFormat
-    (shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
 	private LocalDate modifiedDate;
 
 }
