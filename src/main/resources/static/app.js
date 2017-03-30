@@ -86,11 +86,28 @@ app.controller('AuthController' , function($rootScope, $scope , $http , config, 
 
 app.controller("RouteController", function( $scope, config, $http){	
 
-	$http.get(config.apiUrl + "/routes").then(function(response){
-		$scope.routedetails = response.data;
-		localStorage.setItem("ROUTE_DETAILS", JSON.stringify(response.data));
-		//console.log(JSON.stringify(response));
-	});
+	$scope.init = function() {
+		
+		getAllRouteStats();
+	}
+	
+function getAllRouteStats(){
+		
+		$http.get(config.apiUrl + "/boardingdetails/routestats").then(function(response){
+			$scope.routedetails = response.data;
+			localStorage.setItem("ROUTE_DETAILS", JSON.stringify(response.data));
+			//console.log(JSON.stringify(response));
+		});
+	}
+	
+	function getAllRoutes(){
+		
+		$http.get(config.apiUrl + "/routes").then(function(response){
+			$scope.routedetails = response.data;
+			localStorage.setItem("ROUTE_DETAILS", JSON.stringify(response.data));
+			//console.log(JSON.stringify(response));
+		});
+	}
 	
 	$scope.loadRoutes = function(){
 		console.log("LoadRoutes:" + $scope.route_no);

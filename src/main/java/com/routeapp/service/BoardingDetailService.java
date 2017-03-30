@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.routeapp.dao.BoardingDetailDAO;
 import com.routeapp.model.BoardingDetail;
+import com.routeapp.model.RouteStats;
 
 @Service
 public class BoardingDetailService {
@@ -40,5 +41,9 @@ public class BoardingDetailService {
 
 	public List<BoardingDetail> findByRouteNo(Long routeNo) {
 		return boardingDetailDAO.findByRouteNo(routeNo);
+	}
+	
+	public List<RouteStats> findRouteStats(){
+		return boardingDetailDAO.findRouteStats();
 	}
 }

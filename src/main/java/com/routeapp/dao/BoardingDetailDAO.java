@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.routeapp.model.BoardingDetail;
 import com.routeapp.model.Route;
+import com.routeapp.model.RouteStats;
 
 
 @Repository
@@ -91,6 +92,26 @@ public class BoardingDetailDAO {
 		Object[] params = new Object[] {  bd.getRoute().getId(), bd.getName(),  bd.getPickUpTime(), bd.isActive() };
 		int rows = jdbcTemplate.update(sql, params);
 		System.out.println("No of rows inserted" + rows);
+	}
+	
+	public List<RouteStats> findRouteStats(){
+		String sql = "SELECT route_no, r.name AS route_name,  MIN(pickup_time) start_time, MAX(pickup_time) finish_time, "
+				+ " COUNT(*) no_of_boarding_points FROM route_boarding_details bd, routes r WHERE bd.route_no = r.id GROUP BY route_no, route_name";
+		
+		List<RouteStats> list = jdbcTemplate.query(sql, (rs, rowNum) -> {
+		
+			RouteStats r = new RouteStats();
+			r.setRouteNo(rs.getLong("route_no"));
+			r.setRouteName(rs.getString("route_name"));
+			r.setStartTime(rs.getTime("start_time").toLocalTime());
+			r.setFinishTime(rs.getTime("finish_time").toLocalTime());
+			r.setNoOfBoardingPoints(rs.getInt("no_of_boarding_points"));
+			return r;
+			
+		});
+		
+		return list;
+		
 	}
 
 }

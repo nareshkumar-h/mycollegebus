@@ -1,4 +1,4 @@
-<div class="container" ng-controller="RouteController">
+<div class="container" ng-controller="RouteController" ng-init="init()">
 	<div class="row">
 		<div class="col-md-14">
 			<div class="portlet-title">
@@ -16,12 +16,19 @@
 							<tr>
 								<th>Route No</th>
 								<th>Name</th>
+								<th>Start Time</th>
+								<th>Finish Time </th>
+								<th>No of Boarding Points </th>
 							</tr>
 						</thead>
 						<tbody>
 						<tr ng-repeat="r in routedetails | filter : { 'id' : route_no}">
-						<td> <a href="" ng-click="viewboardingpoints/{{r.id}}"> {{r.id}} </a> </td>						
-						<td> <a href="" ng-click="viewboardingpoints/{{r.id}}"> {{r.name}} </a></td>
+						<td> <a href="" ng-click="viewboardingpoints/{{r.routeNo}}"> {{r.routeNo}} </a> </td>	
+											
+						<td> <a href="" ng-click="viewboardingpoints/{{r.routeNo}}"> {{r.routeName}} </a></td>
+						<td>{{r.startTime}}</td>
+						<td>{{r.finishTime}}</td>
+						<td>{{r.noOfBoardingPoints}}</td>						
 						</tr>
 						</tbody>
 					</table>

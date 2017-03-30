@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.routeapp.model.BoardingDetail;
+import com.routeapp.model.RouteStats;
 import com.routeapp.service.BoardingDetailService;
 
 
@@ -38,6 +39,11 @@ public class BoardingDetailController {
 	@GetMapping("/{id}")
 	public BoardingDetail findById(@PathVariable("id") Long id) {
 		return boardingDetailService.findById(id);
+	}
+	
+	@GetMapping("/routestats")
+	public List<RouteStats> findRouteStats(){
+		return boardingDetailService.findRouteStats();
 	}
 
 	@PostMapping
