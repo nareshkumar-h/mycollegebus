@@ -3,6 +3,8 @@ package com.routeapp.controller;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,23 +39,23 @@ public class AuthController {
 		return userVo;
 	}
 
-	@PostMapping("/")
-	public void register(@RequestParam("code") String code, @RequestParam("name") String name,
-			@RequestParam("gender") String gender, @RequestParam("role") Long role,
-			@RequestParam("emailId") String emailId, @RequestParam("password") String password,
-			@RequestParam("mobileNo") Long mobileNo, ModelMap modelMap, HttpSession session) throws Exception {
+	@PostMapping("/register")
+	public ResponseEntity<?> register(@RequestBody User user) throws Exception {
 
-		User emp = new User();
-		emp.setName(name);
-		emp.setEmail(emailId);
-		emp.setPassword(password);
-		emp.setMobileNo(mobileNo);
-
+		System.out.println(user);
 		Role r = new Role();
-		r.setId(role);
-		emp.setRole(r);
+		r.setId(3L); // Default Student
+		user.setRole(r);
 
-		userService.register(emp);
+		HttpStatus status = null; 
+		try {
+			userService.register(user);
+			status = HttpStatus.CREATED;
+		} catch (Exception e) {
+			e.printStackTrace();
+			status = HttpStatus.BAD_REQUEST;
+		}
+		return new ResponseEntity<>(status);
 
 	}
 }

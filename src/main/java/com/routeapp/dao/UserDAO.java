@@ -72,7 +72,7 @@ public class UserDAO {
 	public void save(User user) {
 
 		String sql = "insert into user_accounts ( name,email, password, mobile_no, role_id )"
-				+ "VALUES ( ?, ?, ?,?,NOW(), NOW() )";
+				+ "VALUES ( ?, ?, ?,?,?)";
 
 		int rows = jdbcTemplate.update(sql, user.getName(), user.getEmail(), user.getPassword(), user.getMobileNo(),
 				user.getRole().getId());

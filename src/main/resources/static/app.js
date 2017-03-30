@@ -1,13 +1,10 @@
-var app = angular.module('myApp',["ngRoute"]);
+var app = angular.module('myApp',["ngRoute","ui.bootstrap"]);
 app.constant("config", {
 	apiUrl : "http://localhost:5000",
 	baseUrl: '/'
 });
 app.config(function($routeProvider) {
-    $routeProvider
-    .when("/", {
-        templateUrl : "_partials/login.html"
-    })
+    $routeProvider    
     .when("/routes", {
         templateUrl : "_partials/routes.html",
         controller : "RouteController"
@@ -31,6 +28,15 @@ app.config(function($routeProvider) {
     .when("/student_routes", {
         templateUrl : "_partials/students_routes.html",
         controller : "StudentRouteController"
+    })
+    .when("/login", {
+        templateUrl : "_partials/login.html"        
+    })
+    .when("/register", {
+        templateUrl : "_partials/register.html"        
+    }).
+    otherwise({
+    	templateUrl : "_partials/login.html"
     });
     
 });
@@ -63,24 +69,50 @@ app.controller('HeaderController' , function($rootScope, $scope, $location){
 });
 app.controller('AuthController' , function($rootScope, $scope , $http , config, $location){
 	console.log("AuthController");
-	
-	console.log("Auth:" + JSON.stringify(config));
-	
+		
 	$scope.login = function() {
 		var user = $scope.user;
-		
+		$scope.errorMessage = null;		
 		$http.post(config.apiUrl + "/auth/login", JSON.stringify(user) ).then ( function ( response){
 			console.log("Login Response:" + JSON.stringify(response.data));			
-			if ( response != null ){
+			if ( response.data != null && response.data != ""){
 				var loggedInUser = response.data;
 				$rootScope.loggedInUser = loggedInUser;
 				localStorage.setItem("LOGGED_IN_USER", JSON.stringify(loggedInUser));
+				$scope.user = null;
 				$location.path("/student_routes");
+			}
+			else
+			{
+				$scope.errorMessage = "Error - Invalid Email/Password !!!";
+				console.log("Error - Unable to login !!!");
 			}
 		});
 		
 	}
 	
+	$scope.register = function() {
+		var user = $scope.user;
+		console.log("REgister user: " + JSON.stringify(user));
+		$scope.errorMessage = null;
+		
+		$http.post(config.apiUrl + "/auth/register", user ).then ( function ( response){
+			console.log("register Response:" + JSON.stringify(response) );			
+			if ( response.status == 201  ){ // 201 refers CREATED status
+				$scope.user= null;
+				$location.path("/login");
+			}
+			else
+			{
+				$scope.errorMessage = "Error - Unable to register !!!";
+				console.log("Error - Unable to register !!!");
+			}
+		}).catch(function(){
+			$scope.errorMessage = "Error - Unable to register !!!";
+			console.log("catch block - Error - Unable to register !!!");
+		});
+		
+	}
 	
 });
 
