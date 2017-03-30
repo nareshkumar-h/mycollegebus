@@ -16,14 +16,18 @@
 							<tr>
 								<th>Sno</th>
 								<th>Name</th>								
-								<th>Route Id</th>
+								<th>Route Name</th>
+								<th>Boarding Point </th>
+								<th>Pickup Time </th>
 							</tr>
 						</thead>
 						<tbody>
 						<tr ng-repeat="s in student_routes | filter : { 'route_no' : route_no}">
-						<td> {{$index+1}} </td>						
-						<td>{{getStudentName(s.student_id)}}</td>		
-						<td> {{getRouteDetails(s.id)}} </td>				
+						<td> {{$index+1}} </td>	
+						<td> {{s.userName}}</td>											
+						<td> Route -{{s.routeId}}- {{s.routeName}} </td>						
+						<td> {{s.boardingName}}</td>				
+						<td> {{s.pickUpTime}}</td>
 						</tr>
 						</tbody>
 					</table>

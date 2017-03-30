@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.routeapp.model.UserBoardingDetail;
 import com.routeapp.service.UserBoardingDetailService;
+import com.routeapp.vo.UserBoardingDetailVO;
 
 
 @CrossOrigin
@@ -26,18 +27,24 @@ public class UserBoardingDetailController {
 	private UserBoardingDetailService boardingDetailService;
 
 	@GetMapping
-	public List<UserBoardingDetail> list() {
-		return boardingDetailService.list();
+	public List<UserBoardingDetailVO> list() {
+		List<UserBoardingDetail> list = boardingDetailService.list();
+		List<UserBoardingDetailVO> ubVOList = UserBoardingDetailVO.convert(list);
+		return ubVOList;
 	}
 	
 	@GetMapping("/routes/{routeNo}")
-	public List<UserBoardingDetail> findByRouteNo(@PathVariable("routeNo") Long routeNo) {
-		return boardingDetailService.findByRouteNo(routeNo);
+	public List<UserBoardingDetailVO> findByRouteNo(@PathVariable("routeNo") Long routeNo) {
+		List<UserBoardingDetail> list = boardingDetailService.findByRouteNo(routeNo);
+		List<UserBoardingDetailVO> userBdList = UserBoardingDetailVO.convert(list);
+		return userBdList;
 	}
 	
 	@GetMapping("/users/{userId}")
-	public List<UserBoardingDetail> findByUserId(@PathVariable("userId") Long userId) {
-		return boardingDetailService.findByUserId(userId);
+	public List<UserBoardingDetailVO> findByUserId(@PathVariable("userId") Long userId) {
+		List<UserBoardingDetail> bdObj = boardingDetailService.findByUserId(userId);
+		List<UserBoardingDetailVO> userBdList = UserBoardingDetailVO.convert(bdObj);
+		return userBdList;
 	}
 
 	@GetMapping("/{id}")

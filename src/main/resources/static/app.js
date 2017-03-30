@@ -66,8 +66,6 @@ app.controller('AuthController' , function($rootScope, $scope , $http , config, 
 	
 	console.log("Auth:" + JSON.stringify(config));
 	
-	$scope.user = { "email" : "ashpeekay23@gmail.com", "password" : "pass123"};
-	
 	$scope.login = function() {
 		var user = $scope.user;
 		
@@ -127,9 +125,11 @@ app.controller("RouteController", function( $scope, config, $http){
 app.controller("RouteBoardingPointController", function( $scope, config, $http){	
 
 	$http.get( config.apiUrl + "/boardingdetails").then(function(response){
-		$scope.routedetails = response.data;
+		var boardingPoints = response.data;
+		
 		localStorage.setItem("BOARDING_DETAILS", JSON.stringify(response.data));
 		//console.log(JSON.stringify(response));
+		$scope.routedetails = boardingPoints;
 	});
 	
 	$scope.loadRoutes = function(){
@@ -289,13 +289,13 @@ app.controller("StudentController", function( $scope, config, $http){
 	$http.get(config.apiUrl + "/users").then(function(response){
 		$scope.students = response.data;
 		console.log(JSON.stringify(response));
-		localStorage.setItem("STUDENT_DETAILS", JSON.stringify(response.data));
+		localStorage.setItem("USER_DETAILS", JSON.stringify(response.data));
 		//console.log(JSON.stringify(response));
 	});
 	
-	$http.get("json/students_routes.json").then(function(response){
+	$http.get(config.apiUrl + "/userboardingdetails").then(function(response){
 		$scope.student_routes = response.data;
-		localStorage.setItem("STUDENT_ROUTE_DETAILS", JSON.stringify(response.data));
+		localStorage.setItem("USER_BOARDING_DETAILS", JSON.stringify(response.data));
 		//console.log(JSON.stringify(response));
 	});
 	
@@ -306,19 +306,21 @@ app.controller("StudentController", function( $scope, config, $http){
 		
 	}
 	
+	
+	
 });
 
-app.controller("StudentRouteController", function( $scope, $http){	
+app.controller("StudentRouteController", function( $scope, config, $http){	
 
-	$http.get("json/students.json").then(function(response){
+	$http.get(config.apiUrl + "/users").then(function(response){
 		$scope.students = response.data;
-		localStorage.setItem("STUDENT_DETAILS", JSON.stringify(response.data));
+		localStorage.setItem("USER_DETAILS", JSON.stringify(response.data));
 		//console.log(JSON.stringify(response));
 	});
 	
-	$http.get("json/students_routes.json").then(function(response){
+	$http.get(config.apiUrl + "/userboardingdetails").then(function(response){
 		var student_routes = response.data;
-		localStorage.setItem("STUDENT_ROUTE_DETAILS", JSON.stringify(response.data));
+		localStorage.setItem("USER_BOARDING_DETAILS", JSON.stringify(response.data));
 		var uniqueRoutes = _.where( student_routes, {})
 		//console.log(JSON.stringify(response));
 		

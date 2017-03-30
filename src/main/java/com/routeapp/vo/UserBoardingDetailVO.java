@@ -1,5 +1,8 @@
 package com.routeapp.vo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.routeapp.model.BoardingDetail;
 import com.routeapp.model.UserBoardingDetail;
 
@@ -37,6 +40,16 @@ public class UserBoardingDetailVO {
 
 		
 		return vo;
+	}
+	
+	public static List<UserBoardingDetailVO> convert(List<UserBoardingDetail> bd){
+		
+		List<UserBoardingDetailVO> ubList = new ArrayList<>();
+		for (UserBoardingDetail ub : bd) {
+			ubList.add(convert(ub));
+		}
+		return ubList;
+		
 	}
 	
 	
