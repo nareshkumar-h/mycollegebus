@@ -12,26 +12,27 @@
 				</div>
 			</div>
 			<div class="portlet-body">
-			Filter:  		Route No : <input type="text"  ng-model="route_no" />  <br/><br/>
-			<button ng-click="loadRoutes()"> Search</button>
+			Search by Route Name : <input type="text"  ng-model="route_name" />  <br/><br/>
 				<div class="table-responsive">
 					<table class="table table-bordered">
 						<thead>
 							<tr>
 								<th>Sno</th>
-								<th>Route No</th>
+								<th>Route Name</th>
 								<th>Boarding Point</th>
 								<th>Time</th>
 								<th>No of Students</th>
 							</tr>
 						</thead>
 						<tbody>
-						<tr ng-repeat="r in routedetails | filter : { 'route_no' : route_no}" >
+						<tr ng-repeat="r in boardingdetails | filter : { 'r.route.name' : route_name}" ng-class="(boardingDetailsStats[r.id]== null ) ? 'red' :''">
 						<td> {{$index+1}} </td>
-						<td> {{r.route_no}} </td>
-						<td ng-class="(routeMap[r.id] == null ) ? 'red' :''">{{r.name}}</td>
-						<td>{{r.pickup_time}}</td>
-						<td>{{ routeMap[r.id] ? routeMap[r.id] : 0}}</td>
+						<td> {{r.route.id}} - {{r.route.name}} </td>
+						<td> {{r.id}} - {{r.name}}</td>
+						<td> {{r.pickUpTime}}</td>
+						<td > {{boardingDetailsStats[r.id]?boardingDetailsStats[r.id]:0}}</td>
+						<!-- <td ng-class="(routeMap[r.id] == null ) ? 'red' :''">{{r.boardingName}}</td>
+						<td>{{ routeMap[r.id] ? routeMap[r.id] : 0}}</td> -->
 						</tr>
 						</tbody>
 					</table>

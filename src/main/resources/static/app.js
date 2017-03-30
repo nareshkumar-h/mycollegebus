@@ -160,40 +160,35 @@ app.controller("RouteBoardingPointController", function( $scope, config, $http){
 	
 });
 
-app.controller("RouteStatsController", function( $scope, $http){
+app.controller("RouteStatsController", function( $scope, config, $http){
 
 	$scope.init = function () 
 	{
-		loadRoutes();
 		loadStudentRoutes();
 		
 	}
-	
-	function loadRoutes() 
-	{
-		$http.get("json/routes.json").then(function(response){
-			$scope.routedetails = response.data;
-			localStorage.setItem("ROUTE_DETAILS", JSON.stringify(response.data));
-			//console.log(JSON.stringify(response));
-		});
-	}
-	
-	function loadStudentRoutes(routes){
+	function loadStudentRoutes(){
 		
-		var routeMap = {};
-		$http.get("json/students_routes.json").then(function(response){
-			var students = response.data;
-			
-			var routeIds = _.uniq(_.pluck(students, "route_id"));
-			for( var i in routeIds){
-				var routeId = routeIds[i];
-				var studentsCount = _.where( students , {"route_id" : routeId}).length;
-				routeMap[routeId] = studentsCount;
-			}
-					
+		
+		$http.get( config.apiUrl + "/boardingdetails").then(function(response){
+			$scope.boardingdetails = response.data;
 		});
-		$scope.routeMap = routeMap;
-		console.log(JSON.stringify(routeMap));
+		
+		var boardingDetailsStats ={};
+		
+		var studentsCountMap = {};
+		$http.get( config.apiUrl + "/userboardingdetails/boardingstats").then(function(response){
+			var boardingDetailsStats = response.data;
+			/*for (var i in userboardingstats) {
+				var obj = userboardingstats[i];
+				boardingDetailsStats[obj.boarding_id] = obj.no_of_students;
+				
+			}
+			*/
+			$scope.boardingDetailsStats = boardingDetailsStats;			
+			
+			console.log(JSON.stringify(boardingDetailsStats));		
+		});
 	}	
 	
 	
@@ -201,85 +196,28 @@ app.controller("RouteStatsController", function( $scope, $http){
 });
 
 
-app.controller("RouteCapacityController", function( $scope, $http){
+app.controller("RouteCapacityController", function( $scope, config,  $http){
 
 	$scope.init = function () 
 	{
 		loadStudentRoutes();
-		loadRoutes();
-	}
-	
-	$scope.selectRoute = function(routeId) {		
-		loadStudentRoutes();
-	}
-	
-	function loadRoutes() 
-	{
-		var routeDetails = [];
-	
-		var routeMap = $scope.routeMap;
-		
-		$http.get("json/routes.json").then(function(response){
-			var routes = response.data;
-			localStorage.setItem("ROUTE_DETAILS", JSON.stringify(response.data));
-			
-			
-			var uniqRouteNos =  _.uniq( _.pluck(routes, "route_no"));
-			var uniqRouteIds =  _.uniq( _.pluck(routes, "id"));
-			console.log("Unique RouteNos: "+ JSON.stringify(uniqRouteIds));
-			for(var i in uniqRouteNos){
-				var routeNo = uniqRouteNos[i];
-				
-				var route_list = _.where(routes, {"route_no" : routeNo});
-				console.log("Route List: "+ JSON.stringify(route_list) );
-				if ( route_list && route_list.length >= 0 ) {
-					var route_name = route_list[0].name +"  to " + route_list[route_list.length-1].name;
-					console.log("Route name: " + route_name );
-					
-					var routeIds = _.pluck ( _.where(routes, {"route_no" : routeNo }) , "id");
-					console.log("RouteNo: "+ routeNo + ", routeIds= " + JSON.stringify(routeIds) );
-					var totalStudents = 0;
-					for ( var j in routeIds) {
-						var routeId = routeIds[j];
-						var count = routeMap[routeId];
-						if ( count ) {
-							totalStudents += count;
-						}
-					}
-					var obj = { "route_no" : routeNo , "route_name" : route_name , "count" : totalStudents};	
-					routeDetails.push(obj);
-					
-				}		
-			}
-			
-			
-			//console.log(JSON.stringify(response));
-		});
-		$scope.routeDetails = routeDetails;
 		
 	}
-	
-	function loadStudentRoutes(routes){
+	function loadStudentRoutes(){
 		
-		var routeMap = {};
-		$http.get("json/students_routes.json").then(function(response){
-			var students = response.data;
-			
-			
-			var routeIds = _.uniq(_.pluck(students, "route_id"));
-			for( var i in routeIds){
-				var routeId = routeIds[i];
-				var studentsCount = _.where( students , {"route_id" : routeId}).length;
-				routeMap[routeId] = studentsCount;
-			}
-					
+		
+		$http.get( config.apiUrl + "/routes").then(function(response){
+			$scope.routes = response.data;
 		});
 		
 		
-		$scope.routeMap = routeMap;
-		console.log(JSON.stringify(routeMap));
+		$http.get( config.apiUrl + "/userboardingdetails/routestats").then(function(response){
+			var boardingDetailsStats = response.data;			
+			$scope.boardingDetailsStats = boardingDetailsStats;
+			console.log(JSON.stringify(boardingDetailsStats));		
+		});
 	}	
-	
+		
 	
 	
 });

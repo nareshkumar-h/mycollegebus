@@ -5,6 +5,7 @@ package com.routeapp.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -112,8 +113,27 @@ public class UserBoardingDetailDAO {
 		List<UserBoardingDetail> list = jdbcTemplate.query(sql, new Object[] {routeNo}, (rs, rowNum) -> {
 			return convert(rs);
 		});
+		return list;	
+	}
+	
+	public List<Map<String, Object>> findBoardingPointStats() {
+
+		String sql = "SELECT boarding_id, COUNT(*) no_of_students FROM user_boarding_details ubd where active=1 GROUP BY boarding_id";
+
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
+		return list;
+	
+	}
+	
+	public List<Map<String, Object>> findByRouteStats() {
+
+		String sql = "SELECT route_no, COUNT(*) no_of_students FROM user_boarding_details ubd , route_boarding_details rbd WHERE  ubd.boarding_id = rbd.id AND  ubd.active=1 AND rbd.active = 1  GROUP BY route_no";
+
+		List<Map<String, Object>> list = jdbcTemplate.queryForList(sql);
 		return list;
 	
 	}
 
+	 
+			 
 }

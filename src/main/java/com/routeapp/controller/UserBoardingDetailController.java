@@ -1,6 +1,7 @@
 package com.routeapp.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,6 +39,16 @@ public class UserBoardingDetailController {
 		List<UserBoardingDetail> list = boardingDetailService.findByRouteNo(routeNo);
 		List<UserBoardingDetailVO> userBdList = UserBoardingDetailVO.convert(list);
 		return userBdList;
+	}
+	
+	@GetMapping("/boardingstats")
+	public Map<Long , Long > findBoardingPointStats() {
+		return boardingDetailService.findBoardingPointStats();
+	}
+	
+	@GetMapping("/routestats")
+	public Map<Integer , Long > findByRouteStats() {
+		return boardingDetailService.findByRouteStats();
 	}
 	
 	@GetMapping("/users/{userId}")
