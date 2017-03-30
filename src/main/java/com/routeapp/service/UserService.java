@@ -25,11 +25,6 @@ public class UserService {
 		return userDAO.findById(empId);
 	}
 
-	public List<User> findMyProfile(Long id) {
-
-		return userDAO.findMyProfile(id);
-	}
-
 	public List<User> list() {
 
 		return userDAO.list();
@@ -47,7 +42,7 @@ public class UserService {
 
 	public void register(User emp) {
 
-		userDAO.registerEmployee(emp);
+		userDAO.save(emp);
 }
 	
 

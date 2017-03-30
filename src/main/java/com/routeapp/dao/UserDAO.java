@@ -18,43 +18,27 @@ public class UserDAO {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	public User findById(Long id) {
-
-		String sql = "SELECT e.ID, e.CODE, NAME, ROLE_ID , ROLE_CODE, ROLE_NAME, EMAIL_ID,e.GENDER, MOBILE_NO, e.ACTIVE, e.CREATED_DATE, e.MODIFIED_DATE FROM EMPLOYEES e, ROLE r WHERE e.ROLE_ID = r.ID AND e.ID = ?";
-
-		User employee = jdbcTemplate.queryForObject(sql, new Object[] { id }, (rs, rowNum) -> {
-
-			return convert(rs);
-
-		});
-		return employee;
-
-	}
-
 	private User convert(ResultSet rs) throws SQLException {
-		User emp = new User();
-		emp.setId(rs.getLong("ID"));
-		emp.setCode(rs.getString("CODE"));
-		emp.setName(rs.getString("NAME"));
-		emp.setEmailId(rs.getString("EMAIL_ID"));
-		emp.setMobileNo(rs.getLong("MOBILE_NO"));
-		emp.setGender(rs.getString("GENDER"));
-		emp.setActive(rs.getBoolean("ACTIVE"));
-		emp.setCreatedDate(rs.getDate("CREATED_DATE").toLocalDate());
-		emp.setModifiedDate(rs.getDate("MODIFIED_DATE").toLocalDate());
+		User user = new User();
+		user.setId(rs.getLong("id"));
+		user.setName(rs.getString("name"));
+		user.setEmail(rs.getString("email"));
+		user.setMobileNo(rs.getLong("mobile_no"));
+		user.setActive(rs.getBoolean("active"));
+		user.setCreatedDate(rs.getDate("created_at").toLocalDate());
+		user.setModifiedDate(rs.getDate("modified_at").toLocalDate());
 
 		Role r = new Role();
-		r.setId(rs.getLong("ROLE_ID"));
-		r.setCode(rs.getString("ROLE_CODE"));
-		r.setName(rs.getString("ROLE_NAME"));
+		r.setId(rs.getLong("id"));
+		r.setName(rs.getString("role_name"));
 
-		emp.setRole(r);
-		return emp;
+		user.setRole(r);
+		return user;
 	}
 
 	public User findByEmailAndPassword(String emailId, String password) {
 
-		String sql = "SELECT e.ID, e.CODE, NAME, ROLE_ID , ROLE_CODE, ROLE_NAME, EMAIL_ID, MOBILE_NO,GENDER, e.ACTIVE, e.CREATED_DATE, e.MODIFIED_DATE FROM EMPLOYEES e, ROLE r WHERE e.ROLE_ID = r.ID AND e.EMAIL_ID = ? AND PASSWORD=? ";
+		String sql = "select u.id, u.name, u.role_id ,r.name as role_name, u.email, u.mobile_no, u.active, u.created_at, u.modified_at from user_accounts u, roles r where u.role_id = r.id AND u.email = ? and password = ?";
 
 		User employee = null;
 
@@ -72,33 +56,33 @@ public class UserDAO {
 
 	}
 
-	public List<User> findMyProfile(Long id) {
+	public User findById(Long id) {
 
-		String sql = "SELECT e.ID, e.CODE, NAME, ROLE_ID , ROLE_CODE, ROLE_NAME, EMAIL_ID, MOBILE_NO,GENDER, e.ACTIVE, e.CREATED_DATE, e.MODIFIED_DATE FROM EMPLOYEES e, ROLE r WHERE e.ROLE_ID = r.ID AND e.ID = ?";
+		String sql = "select u.id, u.name, u.role_id ,r.name as role_name, u.email, u.mobile_no, u.active, u.created_at, u.modified_at from user_accounts u, roles r where u.role_id = r.id AND u.id = ?";
 
-		List<User> employee1 = jdbcTemplate.query(sql, new Object[] { id }, (rs, rowNum) -> {
+		User user = jdbcTemplate.queryForObject(sql, new Object[] { id }, (rs, rowNum) -> {
 
 			return convert(rs);
 
 		});
-		return employee1;
+		return user;
 
 	}
 
-	public void registerEmployee(User emp) {
+	public void save(User user) {
 
-		String sql = "INSERT INTO EMPLOYEES ( CODE , NAME, EMAIL_ID, MOBILE_NO, ROLE_ID,PASSWORD,GENDER,CREATED_DATE,MODIFIED_DATE )"
-				+ "VALUES ( ?, ?, ?, ?, ?,?,?,NOW(), NOW() )";
+		String sql = "insert into user_accounts ( name,email, password, mobile_no, role_id )"
+				+ "VALUES ( ?, ?, ?,?,NOW(), NOW() )";
 
-		int rows = jdbcTemplate.update(sql, emp.getCode(), emp.getName(), emp.getEmailId(), emp.getMobileNo(),
-				emp.getRole().getId(), emp.getPassword(), emp.getGender());
+		int rows = jdbcTemplate.update(sql, user.getName(), user.getEmail(), user.getPassword(), user.getMobileNo(),
+				user.getRole().getId());
 
-		System.out.println("No of rows Register:" + rows);
+		System.out.println("No of rows inserted:" + rows);
 	}
 
 	public List<User> list() {
 
-		String sql = "SELECT e.ID, e.CODE, NAME, ROLE_ID , ROLE_CODE, ROLE_NAME, EMAIL_ID, MOBILE_NO,GENDER, e.ACTIVE, e.CREATED_DATE, e.MODIFIED_DATE FROM EMPLOYEES e, ROLE r WHERE e.ROLE_ID = r.ID";
+		String sql = "select u.id, u.name, u.role_id ,r.name as role_name, u.email, u.mobile_no, u.active, u.created_at, u.modified_at from user_accounts u, roles r where u.role_id = r.id";
 
 		List<User> list = jdbcTemplate.query(sql, new Object[] {}, (rs, rowNum) -> {
 			return convert(rs);
@@ -107,21 +91,21 @@ public class UserDAO {
 
 	}
 
-	public void update(User emp1) {
+	public void update(User user) {
 
-		String sql = "UPDATE EMPLOYEES SET CODE=?,NAME=?,ROLE_ID=?,EMAIL_ID=?,MOBILE_NO=? WHERE ID=? ";
+		String sql = "update user_details set name= ?, role_id = ? , mobile_no =? where id=? ";
 
-		Integer rows = jdbcTemplate.update(sql, emp1.getCode(), emp1.getName(), emp1.getRole().getId(),
-				emp1.getEmailId(), emp1.getMobileNo(), emp1.getId());
+		Integer rows = jdbcTemplate.update(sql,  user.getName(), user.getRole().getId(),
+				user.getEmail(), user.getMobileNo(), user.getId());
 
-		System.out.println("No of rows Changed:" + rows);
+		System.out.println("No of rows updated:" + rows);
 
 	}
 
 	public boolean changePassword(String emailId, String oldPassword, String newPassword) {
 
 		boolean isModified = false;
-		String sql = "UPDATE EMPLOYEES SET PASSWORD=?, MODIFIED_DATE= NOW() WHERE EMAIL_ID=? AND PASSWORD= ?";
+		String sql = "update employees set password=?, modified_at= now() where email_id=? and password= ?";
 		Integer rows = jdbcTemplate.update(sql, newPassword, emailId, oldPassword);
 
 		if (rows >= 1) {
@@ -132,26 +116,24 @@ public class UserDAO {
 		return isModified;
 	}
 
-	public void addPasswordEntry(Long empId, String oldPassword, String newPassword) {
+	public void addPasswordEntry(Long userId, String oldPassword, String newPassword) {
 
-		String sql = "INSERT INTO PASSWORD_HISTORY ( EMP_ID, OLD_PASSWORD,NEW_PASSWORD,CREATED_DATE)"
-				+ "VALUES(?, ?, ?,NOW())";
-		Integer rows = jdbcTemplate.update(sql, empId, oldPassword, newPassword);
+		String sql = "insert into password_history ( user_id, old_password,new_password,created_at)"
+				+ "value(?, ?, ?,NOW())";
+		Integer rows = jdbcTemplate.update(sql, userId, oldPassword, newPassword);
 
-		System.out.println("No of rows Changed:" + rows);
+		System.out.println("No of rows inserted:" + rows);
 
 	}
 
 	public User findByEmailId(String emailId) {
 
-		String sql = "SELECT e.ID, e.CODE, NAME, ROLE_ID , ROLE_CODE, ROLE_NAME, EMAIL_ID,"
-				+ " MOBILE_NO,e.PASSWORD,e.GENDER, e.ACTIVE, e.CREATED_DATE, e.MODIFIED_DATE FROM EMPLOYEES e, "
-				+ "ROLE r WHERE e.ROLE_ID = r.ID AND e.EMAIL_ID = ? ";
+		String sql = "select u.id, u.name, u.role_id ,r.name as role_name, u.email, u.mobile_no, u.active, u.created_at, u.modified_at from user_accounts u, roles r where u.role_id = r.id AND u.email = ? ";
 
-		User employee = null;
+		User user = null;
 
 		try {
-			employee = jdbcTemplate.queryForObject(sql, new Object[] { emailId }, (rs, rowNum) -> {
+			user = jdbcTemplate.queryForObject(sql, new Object[] { emailId }, (rs, rowNum) -> {
 
 				User convert = convert(rs);
 				convert.setPassword(rs.getString("PASSWORD"));
@@ -161,27 +143,15 @@ public class UserDAO {
 		} catch (EmptyResultDataAccessException e) {
 			e.printStackTrace();
 		}
-		return employee;
+		return user;
 
 	}
 
 	public void delete(Long empId) {
 
-		String sql = "DELETE FROM EMPLOYEES WHERE ID= ? ";
+		String sql = "delete from user_details where id = ? ";
 		int rows = jdbcTemplate.update(sql, empId);
 		System.out.println("No of rows deleted:" + rows);
 
 	}
-
-	public void updateJobDetails(User emp1) {
-
-		String sql = "UPDATE EMPLOYEES SET CODE=?,NAME=?,ROLE_ID=?,EMAIL_ID=?,MOBILE_NO=? WHERE ID=? ";
-
-		Integer rows = jdbcTemplate.update(sql, emp1.getCode(), emp1.getName(), emp1.getRole().getId(),
-				emp1.getEmailId(), emp1.getMobileNo(), emp1.getId());
-
-		System.out.println("No of rows Changed:" + rows);
-
-	}
-
 }

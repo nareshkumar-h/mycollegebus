@@ -1,20 +1,12 @@
 package com.routeapp.model;
 
-import java.time.LocalDate;
-
 import lombok.Data;
 
 @Data
-public class Role {
+public class Route {
 
 	private Long id;
-
 	private String name;
-
 	private boolean active;
-
-	private LocalDate createdDate;
-
-	private LocalDate modifiedDate;
-
+	private String trip;
 }

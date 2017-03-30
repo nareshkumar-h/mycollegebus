@@ -12,42 +12,33 @@ import com.routeapp.model.Role;
 
 @Repository
 public class RoleDAO {
-	
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
 	public Role findById(Long id) {
 
-		String sql = "SELECT  ID, ROLE_CODE, ROLE_NAME,LEVEL,CREATED_DATE,MODIFIED_DATE FROM ROLE WHERE ID= ?";
-		Role list = jdbcTemplate.queryForObject(sql, new Object[] { id }, (rs, rowNo) -> {
-
-			Role role = new Role();
-			role.setId(rs.getLong("ID"));
-			role.setCode(rs.getString("ROLE_CODE"));
-			role.setName(rs.getString("ROLE_NAME"));
-			role.setLevel(rs.getInt("LEVEL"));
-			role.setCreatedDate(rs.getDate("CREATED_DATE").toLocalDate());
-			role.setModifiedDate(rs.getDate("MODIFIED_DATE").toLocalDate());
-			return role;
+		String sql = "select  id,name,active,created_date,modified_date from roles where id= ?";
+		Role role = jdbcTemplate.queryForObject(sql, new Object[] { id }, (rs, rowNo) -> {
+			return convert(rs);
 		});
-		return list;
+		return role;
 
 	}
 
 	private Role convert(ResultSet rs) throws SQLException {
 		Role role = new Role();
-		role.setId(rs.getLong("ID"));
-		role.setCode(rs.getString("ROLE_CODE"));
-		role.setName(rs.getString("ROLE_NAME"));
-		role.setLevel(rs.getInt("LEVEL"));
-		role.setCreatedDate(rs.getDate("CREATED_DATE").toLocalDate());
-		role.setModifiedDate(rs.getDate("MODIFIED_DATE").toLocalDate());
+		role.setId(rs.getLong("id"));
+		role.setName(rs.getString("name"));
+		role.setActive(rs.getBoolean("active"));
+		role.setCreatedDate(rs.getDate("created_at").toLocalDate());
+		role.setModifiedDate(rs.getDate("modified_at").toLocalDate());
 		return role;
 	}
 
 	public List<Role> list() {
 
-		String sql = "SELECT ID, ROLE_CODE, ROLE_NAME,LEVEL,CREATED_DATE,MODIFIED_DATE FROM ROLE";
+		String sql = "select  id,name,active,created_date,modified_date from roles";
 
 		List<Role> list = jdbcTemplate.query(sql, new Object[] {}, (rs, rowNum) -> {
 			return convert(rs);
@@ -57,30 +48,29 @@ public class RoleDAO {
 
 	public void save(Role role) {
 
-		String sql = "INSERT INTO ROLE ( ROLE_CODE , ROLE_NAME,LEVEL,CREATED_DATE,MODIFIED_DATE)"
-				+ "VALUES ( ?, ?,?,NOW(),NOW())";
+		String sql = "insert into roles ( name ) values ( ? )";
 
-		int rows = jdbcTemplate.update(sql, role.getCode(), role.getName(), role.getLevel());
+		int rows = jdbcTemplate.update(sql, role.getName());
 
-		System.out.println("No of rows Register:" + rows);
+		System.out.println("No of rows inserted:" + rows);
 	}
 
 	public void update(Role role) {
 
-		String sql = "UPDATE ROLE SET ROLE_CODE=?,ROLE_NAME=?,LEVEL=? WHERE ID=? ";
+		String sql = "update roles set name=?, active= ? where id =? ";
 
-		Integer rows = jdbcTemplate.update(sql, role.getCode(), role.getName(), role.getLevel(), role.getId());
+		Integer rows = jdbcTemplate.update(sql, role.getName(), role.isActive(), role.getId());
 
-		System.out.println("No of rows Changed:" + rows);
+		System.out.println("No of rows modified:" + rows);
 
 	}
 
 	public void delete(Long roleId) {
 
-		String sql = "DELETE FROM ROLE WHERE ID= ? ";
+		String sql = "delete from roles where id = ?";
 		int rows = jdbcTemplate.update(sql, roleId);
 		System.out.println("No of rows deleted:" + rows);
 
-}
+	}
 
 }
